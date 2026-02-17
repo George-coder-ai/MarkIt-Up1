@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: markitup-backend
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: MONGO_URI
+        value: mongodb+srv://your-mongodb-atlas-connection-string
+      - key: JWT_SECRET_KEY
+        value: your_super_secret_jwt_key_here_change_this_in_production
+      - key: JWT_ACCESS_TOKEN_EXPIRES
+        value: 86400
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        value: default-flask-secret-key-change-this
