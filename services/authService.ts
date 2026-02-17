@@ -1,4 +1,10 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://markitup-backend.onrender.com/api/auth';
+// Use environment variable for API URL, fallback to localhost for development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
+
+// Debug: log the API URL in development
+if (import.meta.env.DEV) {
+  console.log('Using API URL:', API_URL);
+}
 
 export const authService = {
     async signup(userData: any) {

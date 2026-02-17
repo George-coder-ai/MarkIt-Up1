@@ -19,13 +19,34 @@ const Signup: React.FC<Props> = ({ onComplete, onBack }) => {
       setError('Please fill in all required fields');
       return;
     }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    // Password validation
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
     setError('');
     setLoading(true);
     try {
-      await authService.signup({ name, email, password });
-      onComplete();
+      const response = await authService.signup({ name, email, password });
+      if (response && response.access_token) {
+        // Store the token immediately after signup
+        localStorage.setItem('token', response.access_token);
+        onComplete();
+      } else {
+        setError('Signup successful but authentication failed. Please login manually.');
+      }
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Failed to create account. Please try again.');
+      console.error('Signup error:', err);
     } finally {
       setLoading(false);
     }

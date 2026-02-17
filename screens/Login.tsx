@@ -14,13 +14,22 @@ const Login: React.FC<Props> = ({ onLogin, onSignup, onBack }) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Please enter both email and password');
+      return;
+    }
+    
     setError('');
     setLoading(true);
     try {
-      const data = await authService.login({ email, password });
+      // Trim whitespace from email to avoid issues
+      const trimmedEmail = email.trim().toLowerCase();
+      const data = await authService.login({ email: trimmedEmail, password });
       onLogin(data.user);
     } catch (err: any) {
-      setError(err.message);
+      const errorMessage = err.message || 'Login failed. Please check your email and password.';
+      setError(errorMessage);
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
