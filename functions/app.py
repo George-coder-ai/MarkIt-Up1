@@ -2,12 +2,16 @@ import os
 from flask import Flask, jsonify
 from config import Config
 from extensions import mongo, jwt, bcrypt, cors
-from routes.auth_routes import auth_bp
+from routes.firebase_auth_routes import firebase_bp
 from database import _memory_db, _use_memory_db
+from firebase_service import init_firebase
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Initialize Firebase
+    init_firebase()
 
     # Initialize extensions
     mongo.init_app(app)
@@ -16,7 +20,7 @@ def create_app(config_class=Config):
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 
     # Register blueprints
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(firebase_bp, url_prefix='/api/auth')
 
     @app.route('/health', methods=['GET'])
     def health_check():
